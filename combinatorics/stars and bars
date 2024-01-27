@@ -1,0 +1,10 @@
+/*
+Number of ways to put n identical items into k
+different boxes or non-negative integer sums: C
+(n+k-1,k-1).
+lower bound on each variable:
+Replace x’=x-ai.
+Upper bound on each variable: find d numbers
+that sums to s such that 0<=xi<=b:
+Σ(-1)i C(d,i) * C((s+d-1-(b+1)i),d-1)
+*/

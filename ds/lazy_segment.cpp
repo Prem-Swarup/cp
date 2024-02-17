@@ -8,7 +8,7 @@ using namespace std ;
 
 
 
-#define MAX 1000
+#define MAX 4*100000+4
 
 
 #define cust long long

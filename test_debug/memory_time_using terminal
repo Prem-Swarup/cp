@@ -1,0 +1,3 @@
+run compiled program as:
+/usr/bin/time -v {program like ./a.out} < {input_file} > {output_file}
+  Maximum resident set size (kbytes): 11264   <----- this will maximum memory used

@@ -2,6 +2,11 @@
 using namespace std;
 
 
+template<typename T=long long>
+T comp(T a, T b) {
+  
+  return min(a, b);
+}
 
 template<typename T=long long>
 class LazySegmentTree {
@@ -10,13 +15,13 @@ public:
     n = arr.size();
     tree.resize(2 * n);
     lazy.resize(2 * n);
-    initial = initl; //std::numeric_limits<T>::max();
+    initial = initl; 
     
     build(arr, 0, n - 1, 1);
   }
 
   // Queries the minimum value in the range [l, r]
-  int query(int l, int r) { return query(l, r, 0, n - 1, 1); }
+  T query(int l, int r) { return query(l, r, 0, n - 1, 1); }
 
   // Updates all elements in the range [l, r] to min(arr[i], x)
   void update(int l, int r, int x) { update(l, r, x, 0, n - 1, 1); }
@@ -26,7 +31,6 @@ public:
   }
 private:
   int n;
-  // std::vector<Node<T>> st;
   vector<T> tree, lazy;
   T initial;
 
@@ -39,25 +43,26 @@ private:
     int mid = (s + e) / 2;
     build(arr, s, mid, 2 * pos);
     build(arr, mid + 1, e, 2 * pos + 1);
-    tree[pos] = std::min(tree[2 * pos], tree[2 * pos + 1]);
+    tree[pos] = comp(tree[2 * pos], tree[2 * pos + 1]);
     lazy[pos] = initial;
   }
 
   void propagate(int node, int l, int r) {
     // Update the minimum value in the node with the lazy value
-    tree[node] = std::min(tree[node], lazy[node]);
+    tree[node] = comp(tree[node], lazy[node]);
     if (l != r) {
       // Propagate the lazy value to children
-      lazy[2*node] = std::min(lazy[2*node], lazy[node]);
-      lazy[2*node+1] = std::min(lazy[2*node+1], lazy[node]);
+      lazy[2*node] = comp(lazy[2*node], lazy[node]);
+      lazy[2*node+1] = comp(lazy[2*node+1], lazy[node]);
     }
     // Reset the lazy value of the current node after propagation
     lazy[node] = initial;
   }
 
 
-  int query(int l, int r, int s, int e, int pos) {
-    propagate(pos, s, e);
+  T query(int l, int r, int s, int e, int pos) {
+    if(lazy[pos]!=initial) 
+      propagate(pos, s, e);
     if (l > e || r < s) {
       return initial;
     }
@@ -65,34 +70,35 @@ private:
       return tree[pos];
     }
     int mid = (s + e) / 2;
-    return std::min(query(l, r, s, mid, 2 * pos), query(l, r, mid + 1, e, 2 * pos + 1));
+    return comp(query(l, r, s, mid, 2 * pos), query(l, r, mid + 1, e, 2 * pos + 1));
   }
 
-  void update(int l, int r, int x, int s, int e, int pos) {
-    propagate(pos, s, e);
+  void update(int l, int r, T x, int s, int e, int pos) {
+    if(lazy[pos]!=initial) 
+      propagate(pos, s, e);
     if (l > e || r < s) {
       return;
     }
     if (l <= s && r >= e) {
-      tree[pos] = std::min(tree[pos], x);
-      lazy[pos] = min(lazy[pos], x);
+      tree[pos] = comp(tree[pos], x);
+      lazy[pos] = comp(lazy[pos], x);
       return;
     }
     int mid = (s + e) / 2;
     update(l, r, x, s, mid, 2 * pos);
     update(l, r, x, mid + 1, e, 2 * pos + 1);
-    tree[pos] = std::min(tree[2*pos], tree[2*pos+1]);
+    tree[pos] = comp(tree[2*pos], tree[2*pos+1]);
   }
 };
 
 void test() {
   int n;
   cin>>n;
-  vector<int> arr(n);
+  vector<long long> arr(n);
   for(int i=0; i<n; ++i)cin>>arr[i];
   int q;cin>>q;
   int x, l, r, type;
-  LazySegmentTree<int> tree(arr, INT_MAX);
+  LazySegmentTree tree(arr, (long long)(INT_MAX));
   // tree.print();cout<<endl;
   for(int i=0; i<q; ++i) {
     cin>>type;
@@ -100,7 +106,7 @@ void test() {
     if(type) {
       cin>>l>>r>>x;
       tree.update(l, r, x);
-      // tree.print();
+      // tree.print(); cout<<endl;
     } else {
       cin>>l>>r;
       cout<<tree.query(l, r)<<endl;

@@ -13,8 +13,8 @@ class LazySegmentTree {
 public:
   LazySegmentTree(const std::vector<T>& arr, T initl) {
     n = arr.size();
-    tree.resize(2 * n);
-    lazy.resize(2 * n);
+    tree.resize(3 * n);
+    lazy.resize(3 * n);
     initial = initl; 
     
     build(arr, 0, n - 1, 1);
